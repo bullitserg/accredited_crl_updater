@@ -276,7 +276,7 @@ if __name__ == '__main__':
             tmp_crl_dir = normpath(join(crl_dir, tmp_crl_dir))
             wait_install_crl_dir = normpath(join(crl_dir, wait_install_crl_dir))
 
-            for location in actual_crl_dir, old_crl_dir, tmp_crl_dir, wait_install_crl_dir:
+            for location in bad_crl_dir, actual_crl_dir, old_crl_dir, tmp_crl_dir, wait_install_crl_dir:
                 if not exists(location):
                     mkdir(location)
 
