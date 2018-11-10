@@ -201,11 +201,7 @@ def install_crl_l(info):
             mkdir(bad_crl_dir_with_date)
 
         info['crl_bad_file'] = join(bad_crl_dir_with_date,
-                                    info['sha1Hash'] + '.crl')
-
-        # если существует проблемный файл с таким именем, то удаляем его
-        if exists(info['crl_bad_file']):
-            remove(info['crl_bad_file'])
+                                    get_datetime_stamp_for_file() + info['sha1Hash'] + '.crl')
 
         # перемещаем проблемный crl
         move(info['crl_wait_file'], info['crl_bad_file'])
@@ -220,8 +216,9 @@ def check_for_install(crl_info):
     crl_info['server'] = namespace.server
     get_crl_db_hash(crl_info)
 
-    # если указанный crl скачать не получилось, то переходим к следующей записи
+    # если указанный crl скачать не получилось, то ставим метку в базу и переходим к следующей записи
     if not crl_info['crl_tmp_file']:
+        cn_crl.execute_query(update_set_download_fail_query % crl_info)
         return
 
     # добавляем в crl_info хэш crl
@@ -309,7 +306,9 @@ if __name__ == '__main__':
                 for c in crl_for_update:
                     # если установили crl, то пишем данные о нем в базу
                     if install_crl_l(c):
-                        cn_crl.execute_query(update_crl_hash_query % c)
+                        cn_crl.execute_query(update_crl_hash_query_ok % c)
+                    else:
+                        cn_crl.execute_query(update_crl_hash_query_bad % c)
 
                 # задержка перед следующим запуском
                 sleep(sleep_time)
