@@ -77,6 +77,12 @@ def get_crl_file(info):
     if isfile(crl_tmp_file_location):
         remove(crl_tmp_file_location)
 
+    # если ссылка не заканчивается .crl, то ссылка кривая
+    if not str(info['crlUrl']).endswith('.crl'):
+        logger.info(log_add('bad_crl') % info)
+        info['crl_tmp_file'] = None
+        return info['crl_tmp_file']
+
     # пробуем загрузить файл по ссылке
     try:
         response = requests.get(info['crlUrl'], timeout=(download_wait_timeout, None), verify=False)
@@ -291,7 +297,7 @@ if __name__ == '__main__':
                 # получаем сведения о crl из последней версии файла
                 accredited_crl_info = cn_crl.execute_query(get_accredited_crl_info_query, dicted=True)
 
-                # загружаем crl в несколько потоков
+                # загружаем crl в неfсколько потоков
                 pool = ThreadPool(download_threads_count)
                 pool.map(get_crl_file, accredited_crl_info)
                 pool.close()
