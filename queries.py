@@ -2,7 +2,12 @@ get_accredited_crl_info_query = '''SELECT
   aci.sha1Hash,
   aci.crlUrl
 FROM accredited_cert_info aci
-WHERE aci.active = 1
+WHERE aci.fileVersion = (SELECT
+    MAX(aci.fileVersion)
+  FROM accredited_cert_info
+  WHERE aci.active = 1
+  AND aci.archive = 0)
+AND aci.active = 1
 AND aci.archive = 0
 ;'''
 
