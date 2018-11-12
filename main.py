@@ -92,13 +92,13 @@ def get_crl_file(info):
             # записываем данные в файл
             with open(crl_tmp_file_location, mode='wb') as crl_out_f:
                 crl_out_f.write(crl_data)
+            info['crl_tmp_file'] = crl_tmp_file_location
+            
         else:
             info['download_error'] = 'Status %s' % response.status_code
             logger.info(log_add('cant_download_crl') % info)
             info['is_download'] = False
             info['crl_tmp_file'] = None
-
-        info['crl_tmp_file'] = crl_tmp_file_location
 
     # обрабатываем исключения с логированием
     except requests.exceptions.ReadTimeout:
