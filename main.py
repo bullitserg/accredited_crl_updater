@@ -93,7 +93,7 @@ def get_crl_file(info):
             with open(crl_tmp_file_location, mode='wb') as crl_out_f:
                 crl_out_f.write(crl_data)
             info['crl_tmp_file'] = crl_tmp_file_location
-            
+            info['is_download'] = True
         else:
             info['download_error'] = 'Status %s' % response.status_code
             logger.info(log_add('cant_download_crl') % info)
@@ -119,7 +119,6 @@ def get_crl_file(info):
         info['is_download'] = False
         info['crl_tmp_file'] = None
 
-    info['is_download'] = True
     return info['crl_tmp_file']
 
 
