@@ -251,8 +251,13 @@ def check_for_install(crl_info):
     crl_info['crl_wait_file'] = join(wait_install_crl_dir,
                                      crl_info['sha1Hash'] + '.crl')
 
-    move(crl_info['crl_tmp_file'], crl_info['crl_wait_file'])
-    crl_for_update.append(crl_info)
+    # переносим для установки, а если такого нет - значит его уже установили ранее
+    # в этом случае нам нужно взять хэш из базы, иначе установится повторно
+    try:
+        move(crl_info['crl_tmp_file'], crl_info['crl_wait_file'])
+        crl_for_update.append(crl_info)
+    except FileNotFoundError:
+        crl_info['crl_file_hash'] = crl_info['crl_db_hash']
     return
 
 
