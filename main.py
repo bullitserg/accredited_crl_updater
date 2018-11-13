@@ -308,10 +308,10 @@ if __name__ == '__main__':
 
             # подключаемся к базе сертификатов
             cn_crl = Mc(connection=Mc.MS_CERT_INFO_CONNECT)
-            cn_crl.connect()
 
             # основной рабочий цикл
             while True:
+                cn_crl.connect()
                 # получаем сведения о crl из последней версии файла
                 accredited_crl_info = cn_crl.execute_query(get_accredited_crl_info_query, dicted=True)
 
@@ -333,6 +333,8 @@ if __name__ == '__main__':
                         cn_crl.execute_query(update_crl_hash_query_ok % c)
                     else:
                         cn_crl.execute_query(update_crl_hash_query_bad % c)
+
+                cn_crl.disconnect()
 
                 # задержка перед следующим запуском
                 sleep(sleep_time)
